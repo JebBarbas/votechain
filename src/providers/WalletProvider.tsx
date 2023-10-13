@@ -1,15 +1,15 @@
-import useLocalStorage from "@/hooks/useLocalStorage";
+import Login from "@/components/Login";
 import { error } from "@/scripts/toast";
-import { createContext, ReactNode, useEffect, useState, useContext } from "react";
+import { createContext, ReactNode, useMemo, useEffect, useState, useContext } from "react";
 
 type WalletContext = {
-    publicKey: string
+    publicKey: string | null
     signIn: () => Promise<void>
     signOut: () => Promise<void>
 }
 
 const walletContextDefaultValue:WalletContext = {
-    publicKey: '',
+    publicKey: null,
     async signIn() {},
     async signOut() {}
 }
@@ -17,7 +17,8 @@ const walletContextDefaultValue:WalletContext = {
 const walletContext = createContext(walletContextDefaultValue)
 
 export function WalletProvider({ children }: { children: ReactNode }){
-    const [publicKey, setPublicKey] = useLocalStorage<string|null>('votechain-public-key', '')
+    const key = useMemo(() => 'votechain-public-key', [])
+    const [publicKey, setPublicKey] = useState<string|null>(null)
 
     async function signIn(){
         // Si phantom no está instalado
@@ -41,7 +42,8 @@ export function WalletProvider({ children }: { children: ReactNode }){
         const result = await phantom.connect()
         const innerPublicKey = result.publicKey.toString()
 
-        setPublicKey(innerPublicKey.toString())
+        setPublicKey(innerPublicKey)
+        localStorage.setItem(key, innerPublicKey)
     }
 
     async function signOut(){
@@ -49,13 +51,11 @@ export function WalletProvider({ children }: { children: ReactNode }){
             //@ts-ignore
             const { solana } = window;
             setPublicKey(null);
+
             solana.disconnect();
+            localStorage.removeItem(key)
         }
     }
-
-    if(!publicKey) return (
-        <div>Loading</div>
-    )
 
     const value:WalletContext = {
         publicKey,
@@ -63,9 +63,23 @@ export function WalletProvider({ children }: { children: ReactNode }){
         signOut,
     }
 
+    useEffect(() => {
+        try{
+            const maybeVal = localStorage.getItem(key)
+            if(!maybeVal) return
+
+            setPublicKey(maybeVal)
+        }
+        catch(e){
+            console.log(e)
+        }
+    }, [key])
+
     return (
         <walletContext.Provider value={value}>
-            {children}
+            {
+                publicKey ? <>{children}</> : <Login/>
+            }
         </walletContext.Provider>
     )
 }

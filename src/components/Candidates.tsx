@@ -9,7 +9,7 @@ export default function Candidates({ candidates, setVoted }: { candidates: Candi
     return (
         <Box className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {
-                candidates.map(candidate => <Candidate key={candidate.id} candidate={candidate} setVoted={setVoted}/>)
+                candidates.map((candidate, i) => <Candidate key={i} candidate={candidate} setVoted={setVoted}/>)
             }
         </Box>
     )

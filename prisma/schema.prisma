@@ -6,33 +6,52 @@ generator client {
 }
 
 datasource db {
-  provider = "mongodb"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model Organization{
-  id String @id  @map("_id")
-  name String
-  slug String
-  
-  VotingEvent String 
-}
+  id    Int @id @default(autoincrement())
+  name  String
+  slug  String 
+
+  voteEvents VoteEvent[]
+} 
 
 model VoteEvent{
-  id String @id @map("_id")
-  name String
-  slug String
+  id          Int @id @default(autoincrement())
+  name        String
+  slug        String
   description String
+
+  votes Vote[]
+  candidates Candidate[]
   
-  Candidates String
+  organization    Organization @relation(fields: [organizationId], references: [id])
+  organizationId  Int
 }
 
 model Candidate{
-  id String @id @map("_id")
-  name String
+  id              Int @id @default(autoincrement())
+  name            String
   tinyDescription String
   longDescription String
-  photoURL String
+  photoURL        String
+
+  votes Vote[]
+
+  voteEvent    VoteEvent @relation(fields: [voteEventId], references: [id])
+  voteEventId  Int
+}
+
+model Vote{
+  id Int @id @default(autoincrement())
+
+  candidate     Candidate @relation(fields: [candidateId], references: [id])
+  candidateId   Int
+
+  voteEvent     VoteEvent @relation(fields: [voteEventId], references: [id])
+  voteEventId   Int
 }
 
 

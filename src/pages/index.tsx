@@ -1,17 +1,14 @@
 import Layout from '@/components/shared/Layout'
-import { useWallet } from '@/providers/WalletProvider'
-import { success, warning, error} from '@/scripts/toast'
-import { Button, Container } from '@mui/material'
+import { useEffect } from 'react'
+import { useRouter } from 'next/router'
 
 export default function Home() {
-    const { signIn, signOut } = useWallet()
-    return (
-        <Layout>
-            Hola Mundo
+    const router = useRouter()
 
-            <Button onClick={signIn}>Login</Button>
-            <Button onClick={signOut}>Logout</Button>
-            <Button onClick={() => error('MUY ERROR')}>Success</Button>
-        </Layout>
+    useEffect(() => {
+        router.push('/create')
+    }, [router])
+    return (
+        <Layout>Taylor Swift Fearless Speak Noow Re e e e e e eed Myreputation Loveeeeer Folkloreeee Evermoreeee Midnights</Layout>
     )
 }

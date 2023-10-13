@@ -3,11 +3,7 @@ import { APP_NAME } from "@/scripts/constants";
 export default function Footer(){
     return (
         <footer
-            style={{
-
-            }}
-
-            className="bg-gray-900"
+            className="p-4"
         >
             &copy; {new Date().getFullYear()} { APP_NAME }
         </footer>
