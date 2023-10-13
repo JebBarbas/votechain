@@ -1,0 +1,39 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Organization{
+  id String @id  @map("_id")
+  name String
+  slug String
+  
+  VotingEvent String 
+}
+
+model VoteEvent{
+  id String @id @map("_id")
+  name String
+  slug String
+  description String
+  
+  Candidates String
+}
+
+model Candidate{
+  id String @id @map("_id")
+  name String
+  tinyDescription String
+  longDescription String
+  photoURL String
+}
+
+
+
